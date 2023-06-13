@@ -1,12 +1,9 @@
 # All settings related to language and the content of messages will be in this file.
 # Currently supported languages:
 #  • English (en)
-#  • Español (es)
-#  • Íslenska (is)
-#  • Magyar (hu)
-#  • Polskie (pl)
+#  • Finnish (fi)
 # Note: You MUST type the letters in the parentheses
-language: 'en'
+language: 'fi'
 
 # - - - - - - - - - - -
 # ~ MESSAGE OVERRIDES ~
@@ -23,5 +20,3 @@ language: 'en'
 #   file found here https://github.com/donvi-bz/JakesRTP/tree/master/Core/src/main/resources/translations then
 #   translate the new language and make a PR. Or you could send me the file another way. Either way, if you do this,
 #   thank you so much. ♥
-
-need-to-wait-for-cooldown: 'Whoops! You still have to wait {0}'
