@@ -1,39 +1,16 @@
 package biz.donvi.jakesRTP;
 
 import io.papermc.lib.PaperLib;
-import org.bukkit.Bukkit;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.block.Biome;
 
 public class SafeLocationUtils {
 
     public static final SafeLocationUtils util;
 
-    private static final SafeLocationUtils_Patch patches;
 
     static {
         util = new SafeLocationUtils();
-        Class<SafeLocationUtils_Patch> patchClass = null;
-        SafeLocationUtils_Patch patchInstance = null;
-        try {
-            if (PaperLib.getMinecraftVersion() <= 12) {
-                //noinspection unchecked
-                patchClass = (Class<SafeLocationUtils_Patch>) Class
-                    .forName("biz.donvi.jakesRTP.SafeLocationUtils_12")
-                    .asSubclass(SafeLocationUtils_Patch.class);
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (patchClass != null)
-            try {
-                patchInstance = patchClass.newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
-                e.printStackTrace();
-            }
-        else patchInstance = new SafeLocationUtils_Patch.BlankPatch();
-        patches = patchInstance;
     }
 
 
@@ -50,7 +27,6 @@ public class SafeLocationUtils {
      * @return Whether it is safe or not to be there
      */
     boolean isSafeToBeIn(Material mat) {
-        if (patches.matchesPatchVersion(12)) return patches.isSafeToBeIn(mat);
         switch (mat) {
             case AIR:
             case SNOW:
@@ -62,6 +38,7 @@ public class SafeLocationUtils {
             case GLOW_LICHEN:
             case MOSS_CARPET:
             case GLOW_BERRIES:
+            case PINK_PETALS:
                 return true;
             case WATER:
             case LAVA:
@@ -79,7 +56,6 @@ public class SafeLocationUtils {
      * @return Whether it is safe or not to be there
      */
     boolean isSafeToBeOn(Material mat) {
-        if (patches.matchesPatchVersion(12)) return patches.isSafeToBeOn(mat);
         switch (mat) {
             case LAVA:
             case MAGMA_BLOCK:
@@ -114,7 +90,6 @@ public class SafeLocationUtils {
      * @return Whether it is a type of leaf
      */
     boolean isTreeLeaves(Material mat) {
-        if (patches.matchesPatchVersion(12)) return patches.isTreeLeaves(mat);
         switch (mat) {
             case ACACIA_LEAVES:
             case BIRCH_LEAVES:
@@ -124,6 +99,39 @@ public class SafeLocationUtils {
             case SPRUCE_LEAVES:
             case AZALEA_LEAVES:
             case FLOWERING_AZALEA_LEAVES:
+            case MANGROVE_LEAVES:
+            case CHERRY_LEAVES:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Checks if the biome is allowed.
+     *
+     * @param biome The biome to check
+     * @return Whether it is an allowed biome
+     */
+    boolean isAllowedBiome(Biome biome) {
+        switch (biome) {
+            case MEADOW:
+            case CHERRY_GROVE:
+            case FOREST:
+            case FLOWER_FOREST:
+            case TAIGA:
+            case OLD_GROWTH_PINE_TAIGA:
+            case OLD_GROWTH_SPRUCE_TAIGA:
+            case BIRCH_FOREST:
+            case OLD_GROWTH_BIRCH_FOREST:
+            case DARK_FOREST:
+            case SPARSE_JUNGLE:
+            case SWAMP:
+            case MANGROVE_SWAMP:
+            case PLAINS:
+            case SUNFLOWER_PLAINS:
+            case SAVANNA:
+            case SAVANNA_PLATEAU:
                 return true;
             default:
                 return false;
@@ -307,6 +315,20 @@ public class SafeLocationUtils {
                     Chunk cache utils
     \* ================================================== */
 
+    Biome locBiomeFromSnapshot(Location loc, ChunkSnapshot chunk) {
+        if (!isLocationInsideChunk(loc, chunk))
+            throw new RuntimeException("The given location is not within given chunk!");
+        int x = loc.getBlockX() % 16;
+        int z = loc.getBlockZ() % 16;
+        if (x < 0) x += 16;
+        if (z < 0) z += 16;
+        return chunkLocBiomeFromSnapshot(x, loc.getBlockY(), z, chunk);
+    }
+
+    Biome chunkLocBiomeFromSnapshot(int inX, int y, int inZ, ChunkSnapshot chunk) {
+        return chunk.getBiome(inX, y, inZ);
+    }
+
     Material locMatFromSnapshot(Location loc, ChunkSnapshot chunk) {
         if (!isLocationInsideChunk(loc, chunk))
             throw new RuntimeException("The given location is not within given chunk!");
@@ -318,8 +340,6 @@ public class SafeLocationUtils {
     }
 
     Material chunkLocMatFromSnapshot(int inX, int y, int inZ, ChunkSnapshot chunk) {
-        if (patches.matchesPatchVersion(12))
-            return patches.chunkLocMatFromSnapshot(inX, y, inZ, chunk);
         return chunk.getBlockData(inX, y, inZ).getMaterial();
     }
 

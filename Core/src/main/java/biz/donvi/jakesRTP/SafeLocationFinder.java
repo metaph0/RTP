@@ -4,6 +4,7 @@ import biz.donvi.jakesRTP.JrtpBaseException.PluginDisabledException;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
@@ -103,39 +104,43 @@ public abstract class SafeLocationFinder {
         if (avm < 0) throw new IllegalArgumentException("Avm can not be less than 0.");
         // Make a temporary location so we don't edit the main one unless its safe.
         Location tempLoc = loc.clone().add(0, avm + 1, 0);
-
-        // Since the actual number of blocks to check per location is 3,
-        //   we need to start with our range at 3, and add from there.
-        int range = avm * 2 + 3;
-        int safe = 0;
-        // We will ALWAYS loop at least 3 times, even if avm is 0.
-        //   Two for air space, one for foot space.
-        for (int i = 0; i < range; i++) {
-            // Only check for safety if were within the valid range, otherwise only move the temp position
-            if (tempLoc.getY() < lowBound) break; // We are too low and will never make it back to a valid height
-            if (tempLoc.getY() < highBound) { // We are at a valid height. Do stuff...
-                Material mat = getLocMaterial(tempLoc);
-                // If either of these conditions are reached, it is not worth checking
-                //   the remaining spaces because the combined result will fail.
-                if ((i == range - 2 && safe == 0) ||
-                    (i == range - 1 && safe != 2)) break;
-                // This is the part that checks if a player can safely stand and fit.
-                if (safe < 2)
-                    if (SafeLocationUtils.util.isSafeToBeIn(mat))
-                        safe++;
-                    else safe = 0;
-                else if (safe == 2)
-                    if (SafeLocationUtils.util.isSafeToBeOn(mat)) {
-                        loc.setX(tempLoc.getX());
-                        loc.setY(tempLoc.getY());
-                        loc.setZ(tempLoc.getZ());
-                        return true;
-                    } else if (!SafeLocationUtils.util.isSafeToBeIn(mat)) {
-                        safe = 0;
-                    }
+        Biome biome = getLocBiome(tempLoc);
+        if (SafeLocationUtils.util.isAllowedBiome(biome)){
+            // Since the actual number of blocks to check per location is 3,
+            //   we need to start with our range at 3, and add from there.
+            int range = avm * 2 + 3;
+            int safe = 0;
+            // We will ALWAYS loop at least 3 times, even if avm is 0.
+            //   Two for air space, one for foot space.
+            for (int i = 0; i < range; i++) {
+                // Only check for safety if were within the valid range, otherwise only move the temp position
+                if (tempLoc.getY() < lowBound) break; // We are too low and will never make it back to a valid height
+                if (tempLoc.getY() < highBound) { // We are at a valid height. Do stuff...
+                    Material mat = getLocMaterial(tempLoc);
+                    // If either of these conditions are reached, it is not worth checking
+                    //   the remaining spaces because the combined result will fail.
+                    if ((i == range - 2 && safe == 0) ||
+                            (i == range - 1 && safe != 2)) break;
+                    // This is the part that checks if a player can safely stand and fit.
+                    if (safe < 2)
+                        if (SafeLocationUtils.util.isSafeToBeIn(mat))
+                            safe++;
+                        else safe = 0;
+                    else if (safe == 2)
+                        if (SafeLocationUtils.util.isSafeToBeOn(mat)) {
+                            loc.setX(tempLoc.getX());
+                            loc.setY(tempLoc.getY());
+                            loc.setZ(tempLoc.getZ());
+                            return true;
+                        } else if (!SafeLocationUtils.util.isSafeToBeIn(mat)) {
+                            safe = 0;
+                        }
+                }
+                // Move down one block, and we loop again
+                tempLoc.add(0, -1, 0);
             }
-            // Move down one block, and we loop again
-            tempLoc.add(0, -1, 0);
+            // We only make it here if no safe place was found
+            return false;
         }
         // We only make it here if no safe place was found
         return false;
@@ -194,6 +199,8 @@ public abstract class SafeLocationFinder {
      * @param loc The location to get the material for.
      */
     protected abstract Material getLocMaterial(Location loc) throws PluginDisabledException, TimeoutException;
+
+    protected abstract Biome getLocBiome(Location loc) throws PluginDisabledException, TimeoutException;
 
     protected abstract void dropToGround() throws PluginDisabledException, TimeoutException;
 

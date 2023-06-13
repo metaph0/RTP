@@ -2,6 +2,7 @@ package biz.donvi.jakesRTP;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 
 import static biz.donvi.jakesRTP.SafeLocationUtils.requireMainThread;
 
@@ -18,6 +19,12 @@ public class SafeLocationFinderBukkitThread extends SafeLocationFinder {
     protected Material getLocMaterial(Location loc) {
         requireMainThread();
         return loc.getBlock().getType();
+    }
+
+    @Override
+    protected Biome getLocBiome(Location loc) {
+        requireMainThread();
+        return loc.getBlock().getBiome();
     }
 
     @Override

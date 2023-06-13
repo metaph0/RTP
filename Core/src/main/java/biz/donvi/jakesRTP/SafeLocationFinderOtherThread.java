@@ -2,6 +2,7 @@ package biz.donvi.jakesRTP;
 
 import io.papermc.lib.PaperLib;
 import org.bukkit.*;
+import org.bukkit.block.Biome;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +61,11 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
     }
 
     @Override
+    protected Biome getLocBiome(Location loc) throws JrtpBaseException.PluginDisabledException, TimeoutException {
+        return SafeLocationUtils.util.locBiomeFromSnapshot(loc, getChunkForLocation(loc));
+    }
+
+    @Override
     protected void dropToGround() throws JrtpBaseException.PluginDisabledException, TimeoutException {
         SafeLocationUtils.util.dropToGround(loc, lowBound, highBound, getChunkForLocation(loc));
     }
@@ -73,6 +79,8 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
     throws JrtpBaseException.PluginDisabledException, IllegalStateException, TimeoutException {
         String chunkKey = chunkXZ(loc.getX()) + " " + chunkXZ(loc.getZ());
         ChunkSnapshot chunkSnapshot = chunkSnapshotMap.get(chunkKey);
+
+
         if (chunkSnapshot != null) return chunkSnapshot;
         try {
             long maxTime = System.currentTimeMillis() + timeout * 1000L; // timeout is in seconds
@@ -92,7 +100,10 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
             Future<CompletableFuture<ChunkSnapshot>> callSyncFuture =
                 Bukkit.getScheduler().callSyncMethod(
                     JakesRtpPlugin.plugin,
-                    () -> PaperLib.getChunkAtAsync(chunkAt).thenApply(Chunk::getChunkSnapshot)
+                        () -> PaperLib.getChunkAtAsync(chunkAt).thenApply(chunk -> {
+                            ChunkSnapshot snapshot = chunk.getChunkSnapshot(false, true, false); // Specify includeBiome=true
+                            return snapshot;
+                        })
                 );
             // Looks to get the result of `callSyncFuture` which will be the value of `getChunkSnapshotFuture`
             while (System.currentTimeMillis() < maxTime && plugin.locCache())
