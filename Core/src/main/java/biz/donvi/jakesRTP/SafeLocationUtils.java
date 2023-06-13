@@ -6,10 +6,6 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-
 public class SafeLocationUtils {
 
     public static final SafeLocationUtils util;

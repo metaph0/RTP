@@ -1,6 +1,5 @@
 package biz.donvi.jakesRTP.claimsIntegrations;
 
-import biz.donvi.jakesRTP.JakesRtpPlugin;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;

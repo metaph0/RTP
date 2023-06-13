@@ -1,7 +1,7 @@
 package biz.donvi.jakesRTP.claimsIntegrations;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.crashcraft.crashclaim.CrashClaim;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
@@ -60,11 +60,12 @@ public class ClaimsManager {
         List<LocationRestrictor> restrictors = new ArrayList<>();
         logger.log(Level.INFO, "Looking for compatible land claim plugins...");
 
-        // GriefPrevention support!
-        generalPluginLoader("grief-prevention", "GriefPrevention", (pluginName) -> {
+
+        // CrashClaim support!
+        generalPluginLoader("crash-claim", "CrashClaim", (pluginName) -> {
             Plugin plugin;
             if ((plugin = tryGetPlugin(pluginName)) != null) {
-                restrictors.add(new LrGriefPrevention((GriefPrevention) plugin));
+                restrictors.add(new LrCrashClaim((CrashClaim) plugin));
                 return true;
             } else return false;
         });
@@ -76,23 +77,6 @@ public class ClaimsManager {
                 restrictors.add(new LrWorldGuard((WorldGuardPlugin) plugin));
                 return true;
             } else return false;
-        });
-
-        //HuskTowns support!
-        generalPluginLoader("husk-towns", "HuskTowns", (pluginName) -> {
-            Plugin plugin;
-            if ((plugin = tryGetPlugin(pluginName)) != null) {
-                restrictors.add(new LrHuskTowns(plugin));
-                return true;
-            } else return false;
-        });
-
-        generalPluginLoader("lands","Lands",(pluginName) -> {
-            Plugin plugin;
-            if ((plugin = tryGetPlugin(pluginName)) != null) {
-                restrictors.add(new LrLands(plugin,ownerPlugin));
-                return true;
-            }else return false;
         });
 
         // End support additions.

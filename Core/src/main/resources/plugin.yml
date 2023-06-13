@@ -12,12 +12,9 @@ softdepend:
   - 'Vault'
   # For world-border support
   - 'ChunkyBorder'
-  - 'WorldBorder'
   # For claims support
-  - 'GriefPrevention'
+  - 'CrashClaim'
   - 'WorldGuard'
-  - 'HuskTowns'
-  - 'Lands'
 
 commands:
   jrtpdebug:
