@@ -132,6 +132,10 @@ public class SafeLocationUtils {
             case SUNFLOWER_PLAINS:
             case SAVANNA:
             case SAVANNA_PLATEAU:
+            case NETHER_WASTES:
+            case SOUL_SAND_VALLEY:
+            case CRIMSON_FOREST:
+            case WARPED_FOREST:
                 return true;
             default:
                 return false;

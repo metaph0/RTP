@@ -75,4 +75,5 @@ logging:
   rtp-on-respawn: true
   rtp-on-command: true
   rtp-on-force-command: true
+  rtp-from-api: true
   rtp-for-queue: false

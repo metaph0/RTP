@@ -48,7 +48,8 @@ public class RandomTeleporter {
         logRtpOnRespawn,
         logRtpOnCommand,
         logRtpOnForceCommand,
-        logRtpForQueue;
+        logRtpForQueue,
+        logRtpFromAPI;
     //</editor-fold>
 
     /**
@@ -154,6 +155,7 @@ public class RandomTeleporter {
         logRtpOnRespawn = globalConfig.getBoolean("logging.rtp-on-respawn", true);
         logRtpOnCommand = globalConfig.getBoolean("logging.rtp-on-command", true);
         logRtpOnForceCommand = globalConfig.getBoolean("logging.rtp-on-force-command", true);
+        logRtpFromAPI = globalConfig.getBoolean("logging.rtp-from-api", true);
         logRtpForQueue = globalConfig.getBoolean("logging.rtp-for-queue", false);
 
         for (String line : infoStringAll(false)) infoLog("[#Static] " + line);
@@ -555,6 +557,7 @@ public class RandomTeleporter {
         lines.add(LVL_02_SET.format(mcFormat, "RTP on respawn", enabledOrDisabled(logRtpOnRespawn)));
         lines.add(LVL_02_SET.format(mcFormat, "RTP on command", enabledOrDisabled(logRtpOnCommand)));
         lines.add(LVL_02_SET.format(mcFormat, "RTP on force command", enabledOrDisabled(logRtpOnForceCommand)));
+        lines.add(LVL_02_SET.format(mcFormat, "RTP on API", enabledOrDisabled(logRtpFromAPI)));
         lines.add(LVL_02_SET.format(mcFormat, "RTP for queue", enabledOrDisabled(logRtpForQueue)));
         return lines;
     }

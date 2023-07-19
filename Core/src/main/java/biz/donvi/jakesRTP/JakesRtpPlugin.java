@@ -1,6 +1,7 @@
 package biz.donvi.jakesRTP;
 
 import biz.donvi.argsChecker.Util;
+import biz.donvi.jakesRTP.API.rtpAPI;
 import biz.donvi.jakesRTP.claimsIntegrations.ClaimsManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -48,6 +49,7 @@ public final class JakesRtpPlugin extends JavaPlugin {
     private boolean hasEconomy;
 
     private boolean locCache = false;
+
     //</editor-fold>
 
     @Override
