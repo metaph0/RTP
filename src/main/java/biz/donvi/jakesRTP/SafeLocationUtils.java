@@ -4,6 +4,11 @@ import io.papermc.lib.PaperLib;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.bukkit.block.Biome.*;
+
 public class SafeLocationUtils {
 
     public static final SafeLocationUtils util;
@@ -114,32 +119,30 @@ public class SafeLocationUtils {
      * @return Whether it is an allowed biome
      */
     boolean isAllowedBiome(Biome biome) {
-        switch (biome) {
-            case MEADOW:
-            case CHERRY_GROVE:
-            case FOREST:
-            case FLOWER_FOREST:
-            case TAIGA:
-            case OLD_GROWTH_PINE_TAIGA:
-            case OLD_GROWTH_SPRUCE_TAIGA:
-            case BIRCH_FOREST:
-            case OLD_GROWTH_BIRCH_FOREST:
-            case DARK_FOREST:
-            case SPARSE_JUNGLE:
-            case SWAMP:
-            case MANGROVE_SWAMP:
-            case PLAINS:
-            case SUNFLOWER_PLAINS:
-            case SAVANNA:
-            case SAVANNA_PLATEAU:
-            case NETHER_WASTES:
-            case SOUL_SAND_VALLEY:
-            case CRIMSON_FOREST:
-            case WARPED_FOREST:
-                return true;
-            default:
-                return false;
-        }
+        Set<Biome> allowedBiomes = new HashSet<>();
+        allowedBiomes.add(Biome.MEADOW);
+        allowedBiomes.add(Biome.CHERRY_GROVE);
+        allowedBiomes.add(Biome.FOREST);
+        allowedBiomes.add(Biome.FLOWER_FOREST);
+        allowedBiomes.add(Biome.TAIGA);
+        allowedBiomes.add(Biome.OLD_GROWTH_PINE_TAIGA);
+        allowedBiomes.add(Biome.OLD_GROWTH_SPRUCE_TAIGA);
+        allowedBiomes.add(Biome.BIRCH_FOREST);
+        allowedBiomes.add(Biome.OLD_GROWTH_BIRCH_FOREST);
+        allowedBiomes.add(Biome.DARK_FOREST);
+        allowedBiomes.add(Biome.SPARSE_JUNGLE);
+        allowedBiomes.add(Biome.SWAMP);
+        allowedBiomes.add(Biome.MANGROVE_SWAMP);
+        allowedBiomes.add(Biome.PLAINS);
+        allowedBiomes.add(Biome.SUNFLOWER_PLAINS);
+        allowedBiomes.add(Biome.SAVANNA);
+        allowedBiomes.add(Biome.SAVANNA_PLATEAU);
+        allowedBiomes.add(Biome.NETHER_WASTES);
+        allowedBiomes.add(Biome.SOUL_SAND_VALLEY);
+        allowedBiomes.add(Biome.CRIMSON_FOREST);
+        allowedBiomes.add(Biome.WARPED_FOREST);
+
+        return allowedBiomes.contains(biome);
     }
 
     /**
