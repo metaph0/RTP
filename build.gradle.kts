@@ -25,21 +25,9 @@ dependencies {
     compileOnly("org.popcraft:chunkyborder-bukkit:1.2.13")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
-    implementation("io.papermc:paperlib:1.0.7")
 }
 
 tasks {
-    assemble {
-        dependsOn(shadowJar)
-    }
-
-    shadowJar {
-        archiveFileName.set("${rootProject.name}-${version}.jar")
-        relocate("io.papermc", "biz.donvi.jakesRTP.libs.io.papermc")
-        relocate("biz.donvi.argsChecker", "biz.donvi.jakesRTP.libs.biz.donvi.argsChecker")
-        relocate("biz.donvi.evenDistribution", "biz.donvi.jakesRTP.libs.biz.donvi.evenDistribution")
-    }
-
     processResources {
         expand(project.properties)
     }

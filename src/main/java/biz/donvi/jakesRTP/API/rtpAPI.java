@@ -1,10 +1,10 @@
 package biz.donvi.jakesRTP.API;
 
+import biz.donvi.jakesRTP.Teleportation.RandomTeleportAction;
+import biz.donvi.jakesRTP.Teleportation.RandomTeleporter;
+import biz.donvi.jakesRTP.Teleportation.RtpProfile;
 import biz.donvi.jakesRTP.*;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
 
 public class rtpAPI {
     private final JakesRtpPlugin jakesRtpPlugin;

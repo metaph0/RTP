@@ -1,8 +1,16 @@
 package biz.donvi.jakesRTP;
 
-import biz.donvi.argsChecker.Util;
-import biz.donvi.jakesRTP.API.rtpAPI;
-import biz.donvi.jakesRTP.claimsIntegrations.ClaimsManager;
+import biz.donvi.jakesRTP.Teleportation.RandomTeleporter;
+import biz.donvi.jakesRTP.Teleportation.RtpOnEvent;
+import biz.donvi.jakesRTP.argsChecker.Util;
+import biz.donvi.jakesRTP.Commands.CmdForceRtp;
+import biz.donvi.jakesRTP.Commands.CmdRtp;
+import biz.donvi.jakesRTP.Commands.CmdRtpAdmin;
+import biz.donvi.jakesRTP.Messages.Messages;
+import biz.donvi.jakesRTP.PluginHooks.ClaimsManager;
+import biz.donvi.jakesRTP.PluginHooks.WorldBorderPluginHook;
+import biz.donvi.jakesRTP.Utils.GeneralUtil;
+import biz.donvi.jakesRTP.Utils.LocationCacheFiller;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -21,18 +29,18 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static biz.donvi.jakesRTP.claimsIntegrations.LrWorldGuard.registerWorldGuardFlag;
+import static biz.donvi.jakesRTP.PluginHooks.LrWorldGuard.registerWorldGuardFlag;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class JakesRtpPlugin extends JavaPlugin {
 
 
     //<editor-fold desc="======== Static Fields ========">
-    static JakesRtpPlugin        plugin;
-    static Map<String, Object>   cmdMap;
-    static LocationCacheFiller   locFinderRunnable;
-    static WorldBorderPluginHook worldBorderPluginHook;
-    static ClaimsManager         claimsManager = null;
+    public static JakesRtpPlugin        plugin;
+    public static Map<String, Object>   cmdMap;
+    public static LocationCacheFiller locFinderRunnable;
+    public static WorldBorderPluginHook worldBorderPluginHook;
+    public static ClaimsManager         claimsManager = null;
 
     private static       Logger logger;
     private static final String LANG_SETTINGS_FILE_NAME = "language-settings.yml";
@@ -100,7 +108,7 @@ public final class JakesRtpPlugin extends JavaPlugin {
     \* ================================================== */
 
 
-    void reloadCommands() {
+    public void reloadCommands() {
         HandlerList.unregisterAll(this);
         getCommand("rtp-admin").setExecutor(new CmdRtpAdmin(Util.getImpliedMap(cmdMap, "rtp-admin")));
     }
