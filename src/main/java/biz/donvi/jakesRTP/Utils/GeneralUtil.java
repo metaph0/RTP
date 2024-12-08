@@ -1,7 +1,6 @@
 package biz.donvi.jakesRTP.Utils;
 
 import biz.donvi.jakesRTP.Messages.Messages;
-import io.papermc.lib.PaperLib;
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -177,7 +176,7 @@ public final class GeneralUtil {
      */
     public static boolean isAnchorSpawn(PlayerRespawnEvent event) {return anchorSupport && event.isAnchorSpawn();}
 
-    private static final boolean anchorSupport = PaperLib.getMinecraftVersion() >= 16;
+    private static final boolean anchorSupport = true;
 
     /**
      * Just lists out the items in a list. Doesn't say "and" or "or" at the end, its just a simple
