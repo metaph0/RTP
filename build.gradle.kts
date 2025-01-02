@@ -11,7 +11,7 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 repositories {
     mavenLocal()
     mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://jitpack.io")
     maven("https://maven.enginehub.org/repo/")
@@ -23,7 +23,9 @@ dependencies {
     compileOnly("org.popcraft:chunky-common:1.4.10")
     compileOnly("org.popcraft:chunkyborder-common:1.2.13")
     compileOnly("org.popcraft:chunkyborder-bukkit:1.2.13")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
 }
 

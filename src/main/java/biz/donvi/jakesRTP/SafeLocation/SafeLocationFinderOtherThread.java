@@ -77,7 +77,7 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
     }
 
     private ChunkSnapshot getChunkForLocation(Location loc)
-    throws JrtpBaseException.PluginDisabledException, IllegalStateException, TimeoutException {
+            throws JrtpBaseException.PluginDisabledException, IllegalStateException, TimeoutException {
         String chunkKey = chunkXZ(loc.getX()) + " " + chunkXZ(loc.getZ());
         ChunkSnapshot chunkSnapshot = chunkSnapshotMap.get(chunkKey);
 
@@ -124,7 +124,7 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
             if (chunkSnapshot == null) throw new TimeoutException("Essentially timed out ~");
             // If we made it this far and still want to keep trying, then `chunkSnapshot` has a value
             if (plugin.locCache()) chunkSnapshotMap.put(chunkKey, chunkSnapshot); // Save value for later
-            // If not, we want to throw an exception to get us all the way back home (so we can exit)
+                // If not, we want to throw an exception to get us all the way back home (so we can exit)
             else throw new JrtpBaseException.PluginDisabledException();
         } catch (CancellationException ignored) {
             throw new JrtpBaseException.PluginDisabledException();
@@ -135,6 +135,4 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
         }
         return chunkSnapshot;
     }
-
-
 }

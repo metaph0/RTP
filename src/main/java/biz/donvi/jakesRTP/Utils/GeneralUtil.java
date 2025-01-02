@@ -1,7 +1,7 @@
 package biz.donvi.jakesRTP.Utils;
 
 import biz.donvi.jakesRTP.Messages.Messages;
-import org.apache.commons.lang.text.StrBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -40,14 +40,11 @@ public final class GeneralUtil {
      * @param forceDecimal  If true, the same number of decimal places will be shown, using 0's if there is no digit
      * @return The location as a string.
      */
+
     public static String locationAsString(Location loc, int decimalPlaces, boolean forceDecimal) {
-        double[] pos = {loc.getX(), loc.getY(), loc.getZ()};
-        String[] posS = new String[3];
         String worldName = loc.getWorld() == null ? "" : loc.getWorld().getName();
-        DecimalFormat decimalFormat = decimalPlaces == 0 ? new DecimalFormat("0")
-            : new DecimalFormat(new StrBuilder("0.").append(stringOf('#', decimalPlaces)).toString());
-        for (int i = 0; i < pos.length; i++) posS[i] = decimalFormat.format(pos[i]);
-        return worldName + " (" + posS[0] + ", " + posS[1] + ", " + posS[2] + ")";
+        DecimalFormat format = new DecimalFormat("0" + (decimalPlaces > 0 ? "." + StringUtils.repeat('#', decimalPlaces) : ""));
+        return worldName + " (" + format.format(loc.getX()) + ", " + format.format(loc.getY()) + ", " + format.format(loc.getZ()) + ")";
     }
 
     /**

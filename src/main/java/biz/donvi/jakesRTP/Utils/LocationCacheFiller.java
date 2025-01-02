@@ -31,10 +31,10 @@ public class LocationCacheFiller implements Runnable {
     @Override
     public void run() {
         final String threadOldName = Thread.currentThread().getName();
-        Thread.currentThread().setName("[J-RTP] Loc Cache Filler");
+        Thread.currentThread().setName("Loc Cache Filler");
         try {
             SimpleLagTimer.blockingTimer(pluginMain(), 5000);
-            infoLog("[J-RTP] LCF Started.");
+            infoLog("LCF Started.");
             int issueCounter = 0, issueCounterMax = 10;
             while (keepRunning && isPluginLoaded()) {
                 for (RtpProfile settings : getCurrentRtpSettings()) {
@@ -63,14 +63,14 @@ public class LocationCacheFiller implements Runnable {
                 patientlyWait(recheckTime);
             }
         } catch (JrtpBaseException.PluginDisabledException ignored) {
-            infoLog("[J-RTP] Plugin disabled while finding a location. Location scrapped.");
+            infoLog("Plugin disabled while finding a location. Location scrapped.");
         } catch (ReferenceNonExistentException ignored) {
-            infoLog("[J-RTP] Plugin no longer exists.");
+            infoLog("Plugin no longer exists.");
         } catch (Exception e) {
             infoLog("Something unexpected went wrong.");
             e.printStackTrace();
         }
-        infoLog("[J-RTP] Shutting location caching thread down.");
+        infoLog("Shutting location caching thread down.");
         Thread.currentThread().setName(threadOldName);
     }
 
