@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitWorker;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -95,8 +96,14 @@ public final class JakesRtpPlugin extends JavaPlugin {
         locCache = false;
         HandlerList.unregisterAll(this);
         theRandomTeleporter = null;
+        //the threads of this plugin are not critical, lets murder them
         locFinderRunnable.markAsOver();
         Bukkit.getScheduler().cancelTasks(this);
+        for (BukkitWorker bukkitWorker : Bukkit.getScheduler().getActiveWorkers()) {
+            if (bukkitWorker.getOwner().equals(this)){
+                bukkitWorker.getThread().interrupt();
+            }
+        }
     }
 
     public boolean locCache() {

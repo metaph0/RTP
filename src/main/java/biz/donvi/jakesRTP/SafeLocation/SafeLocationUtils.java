@@ -1,5 +1,10 @@
 package biz.donvi.jakesRTP.SafeLocation;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.TypedKey;
+import io.papermc.paper.registry.keys.BiomeKeys;
+import io.papermc.paper.registry.keys.tags.BiomeTagKeys;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 
@@ -29,26 +34,11 @@ public class SafeLocationUtils {
      * @return Whether it is safe or not to be there
      */
     boolean isSafeToBeIn(Material mat) {
-        switch (mat) {
-            case AIR:
-            case SNOW:
-            case FERN:
-            case LARGE_FERN:
-            case VINE:
-            case SHORT_GRASS:
-            case TALL_GRASS:
-            case GLOW_LICHEN:
-            case MOSS_CARPET:
-            case GLOW_BERRIES:
-            case PINK_PETALS:
-                return true;
-            case WATER:
-            case LAVA:
-            case CAVE_AIR:
-            case POWDER_SNOW:
-            default:
-                return false;
-        }
+        return switch (mat) {
+            case AIR, SNOW, FERN, LARGE_FERN, VINE, SHORT_GRASS, TALL_GRASS, GLOW_LICHEN, MOSS_CARPET, GLOW_BERRIES,
+                 PINK_PETALS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -58,31 +48,11 @@ public class SafeLocationUtils {
      * @return Whether it is safe or not to be there
      */
     boolean isSafeToBeOn(Material mat) {
-        switch (mat) {
-            case LAVA:
-            case MAGMA_BLOCK:
-            case WATER:
-            case AIR:
-            case CAVE_AIR:
-            case VOID_AIR:
-            case CACTUS:
-            case SEAGRASS:
-            case KELP:
-            case TALL_SEAGRASS:
-            case LILY_PAD:
-            case BAMBOO:
-            case BAMBOO_SAPLING:
-            case SMALL_DRIPLEAF:
-            case BIG_DRIPLEAF:
-            case BIG_DRIPLEAF_STEM:
-            case POINTED_DRIPSTONE:
-                return false;
-            case GRASS_BLOCK:
-            case STONE:
-            case DIRT:
-            default:
-                return true;
-        }
+        return switch (mat) {
+            case LAVA, MAGMA_BLOCK, WATER, AIR, CAVE_AIR, VOID_AIR, CACTUS, SEAGRASS, KELP, TALL_SEAGRASS, LILY_PAD,
+                 BAMBOO, BAMBOO_SAPLING, SMALL_DRIPLEAF, BIG_DRIPLEAF, BIG_DRIPLEAF_STEM, POINTED_DRIPSTONE, VINE -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -92,21 +62,7 @@ public class SafeLocationUtils {
      * @return Whether it is a type of leaf
      */
     boolean isTreeLeaves(Material mat) {
-        switch (mat) {
-            case ACACIA_LEAVES:
-            case BIRCH_LEAVES:
-            case DARK_OAK_LEAVES:
-            case JUNGLE_LEAVES:
-            case OAK_LEAVES:
-            case SPRUCE_LEAVES:
-            case AZALEA_LEAVES:
-            case FLOWERING_AZALEA_LEAVES:
-            case MANGROVE_LEAVES:
-            case CHERRY_LEAVES:
-                return true;
-            default:
-                return false;
-        }
+        return Tag.LEAVES.isTagged(mat);
     }
 
     /**
@@ -116,30 +72,16 @@ public class SafeLocationUtils {
      * @return Whether it is an allowed biome
      */
     boolean isAllowedBiome(Biome biome) {
-        Set<Biome> allowedBiomes = new HashSet<>();
-        allowedBiomes.add(Biome.MEADOW);
-        allowedBiomes.add(Biome.CHERRY_GROVE);
-        allowedBiomes.add(Biome.FOREST);
-        allowedBiomes.add(Biome.FLOWER_FOREST);
-        allowedBiomes.add(Biome.TAIGA);
-        allowedBiomes.add(Biome.OLD_GROWTH_PINE_TAIGA);
-        allowedBiomes.add(Biome.OLD_GROWTH_SPRUCE_TAIGA);
-        allowedBiomes.add(Biome.BIRCH_FOREST);
-        allowedBiomes.add(Biome.OLD_GROWTH_BIRCH_FOREST);
-        allowedBiomes.add(Biome.DARK_FOREST);
-        allowedBiomes.add(Biome.SPARSE_JUNGLE);
-        allowedBiomes.add(Biome.SWAMP);
-        allowedBiomes.add(Biome.MANGROVE_SWAMP);
-        allowedBiomes.add(Biome.PLAINS);
-        allowedBiomes.add(Biome.SUNFLOWER_PLAINS);
-        allowedBiomes.add(Biome.SAVANNA);
-        allowedBiomes.add(Biome.SAVANNA_PLATEAU);
-        allowedBiomes.add(Biome.NETHER_WASTES);
-        allowedBiomes.add(Biome.SOUL_SAND_VALLEY);
-        allowedBiomes.add(Biome.CRIMSON_FOREST);
-        allowedBiomes.add(Biome.WARPED_FOREST);
+        Registry<Biome> biomeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME);
+        TypedKey<Biome> biomeTypedKey = TypedKey.create(RegistryKey.BIOME, biomeRegistry.getKeyOrThrow(biome));
 
-        return allowedBiomes.contains(biome);
+        return biomeRegistry.getTag(BiomeTagKeys.IS_FOREST).contains(biomeTypedKey) ||
+                biomeRegistry.getTag(BiomeTagKeys.IS_SAVANNA).contains(biomeTypedKey) ||
+                biomeRegistry.getTag(BiomeTagKeys.IS_TAIGA).contains(biomeTypedKey) ||
+                biomeRegistry.getTag(BiomeTagKeys.IS_HILL).contains(biomeTypedKey) ||
+                biomeRegistry.getTag(BiomeTagKeys.IS_JUNGLE).contains(biomeTypedKey) ||
+                biomeRegistry.getTag(BiomeTagKeys.IS_NETHER).contains(biomeTypedKey) ||
+                biomeRegistry.getTag(BiomeTagKeys.IS_END).contains(biomeTypedKey);
     }
 
     /**
