@@ -1,5 +1,1 @@
-rootProject.name = 'JakesRTP'
-include(
-        'Core'
-//        'patch-1-12-2'
-)
+rootProject.name = 'RTP'

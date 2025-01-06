@@ -1,6 +1,6 @@
-name: JakesRTP
+name: RTP
 author: JakeTS
-main: biz.donvi.jakesRTP.JakesRtpPlugin
+main: net.gahvila.rtp.RTP
 version: '${version}'
 api-version: '1.20'
 

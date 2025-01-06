@@ -1,11 +1,11 @@
 plugins {
     java
+    `maven-publish`
     id("com.gradleup.shadow") version "8.3.5"
 }
 
-group = "biz.donvi"
-version = "0.16.0"
-description = "IF"
+group = "net.gahvila"
+version = "0.17.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
@@ -27,6 +27,27 @@ dependencies {
         exclude(group = "org.bukkit", module = "bukkit")
     }
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "gahvila"
+            url = uri("https://repo.gahvila.net/snapshots/")
+            credentials(PasswordCredentials::class)
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "net.gahvila"
+            artifactId = "rtp"
+            version = findProperty("version").toString()
+            from(components["java"])
+        }
+    }
 }
 
 tasks {
