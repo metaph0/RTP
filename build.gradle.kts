@@ -11,6 +11,7 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 repositories {
     mavenLocal()
     mavenCentral()
+    maven("https://repo.gahvila.net/snapshots/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://jitpack.io")
@@ -19,7 +20,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("net.crashcraft:CrashClaim:1.0.42")
+    implementation("net.crashcraft:crashclaim:1.0.42")
     compileOnly("org.popcraft:chunky-common:1.4.10")
     compileOnly("org.popcraft:chunkyborder-common:1.2.13")
     compileOnly("org.popcraft:chunkyborder-bukkit:1.2.13")
