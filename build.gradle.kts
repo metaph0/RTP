@@ -16,6 +16,7 @@ repositories {
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://jitpack.io")
     maven("https://maven.enginehub.org/repo/")
+    maven("https://repo.aikar.co/content/groups/aikar/")
 }
 
 dependencies {
