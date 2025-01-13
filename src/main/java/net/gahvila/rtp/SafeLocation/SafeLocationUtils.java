@@ -51,7 +51,7 @@ public class SafeLocationUtils {
     boolean isSafeToBeOn(Material mat) {
         return switch (mat) {
             case LAVA, MAGMA_BLOCK, WATER, AIR, CAVE_AIR, VOID_AIR, CACTUS, SEAGRASS, KELP, TALL_SEAGRASS, LILY_PAD,
-                 BAMBOO, BAMBOO_SAPLING, SMALL_DRIPLEAF, BIG_DRIPLEAF, BIG_DRIPLEAF_STEM, POINTED_DRIPSTONE, VINE -> false;
+                 BAMBOO, BAMBOO_SAPLING, SMALL_DRIPLEAF, BIG_DRIPLEAF, BIG_DRIPLEAF_STEM, POINTED_DRIPSTONE, VINE, POWDER_SNOW -> false;
             default -> true;
         };
     }
