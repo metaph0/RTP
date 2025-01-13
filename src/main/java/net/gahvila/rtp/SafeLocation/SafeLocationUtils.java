@@ -145,7 +145,7 @@ public class SafeLocationUtils {
      */
     void dropToGround(final Location loc) {
         requireMainThread();
-        loc.setY(loc.getWorld().getHighestBlockYAt(loc));
+        loc.setY(loc.getWorld().getHighestBlockYAt(loc) + 1);
         while (isSafeToBeIn(loc.getBlock().getType()) || isSafeToGoThrough(loc.getBlock().getType()))
             loc.add(0, -1, 0);
     }
@@ -159,7 +159,7 @@ public class SafeLocationUtils {
      * @param chunk The chunk snapshot that contains the {@code Location}'s data.
      */
     void dropToGround(final Location loc, ChunkSnapshot chunk) {
-        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk));
+        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk) + 1);
         while (isSafeToBeIn(locMatFromSnapshot(loc, chunk)) || isSafeToGoThrough(locMatFromSnapshot(loc, chunk)))
             loc.add(0, -1, 0);
     }
@@ -174,7 +174,7 @@ public class SafeLocationUtils {
      */
     void dropToGround(final Location loc, int lowBound, int highBound) {
         requireMainThread();
-        loc.setY(loc.getWorld().getHighestBlockYAt(loc));
+        loc.setY(loc.getWorld().getHighestBlockYAt(loc) + 1);
         // If our location was above the max height, drop us to it.
         if (loc.getY() > highBound) {
             loc.setY(highBound);
@@ -201,7 +201,7 @@ public class SafeLocationUtils {
      * @param chunk    The chunk snapshot that contains the {@code Location}'s data.
      */
     void dropToGround(final Location loc, int lowBound, int highBound, ChunkSnapshot chunk) {
-        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk));
+        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk) + 1);
         // If our location was above the max height, drop us to it.
         if (loc.getY() > highBound) {
             loc.setY(highBound);
