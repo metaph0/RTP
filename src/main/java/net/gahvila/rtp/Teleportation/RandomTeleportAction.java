@@ -175,7 +175,7 @@ public class RandomTeleportAction {
             takeFromQueue);
         this.player = player;
         //<editor-fold desc="setPlaceholders();">
-        if (rtpProfile.commandsToRun.length != 0) {
+        if (rtpProfile.commandsToRun.length != 0 || rtpProfile.messagesToSend.length != 0) {
             placeholders.put("location", locationAsString(landingLoc, 1, false));
             placeholders.put("world", Objects.requireNonNull(landingLoc.getWorld()).getName());
             placeholders.put("x", String.valueOf(landingLoc.getBlockX()));
@@ -213,9 +213,10 @@ public class RandomTeleportAction {
                 logMessage +
                 "Player did not teleport.");
         rtpCount++;
-        if (rtpProfile.commandsToRun.length != 0)
-            for (String command : rtpProfile.commandsToRun)
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), fillPlaceholders(command, placeholders));
+        for (String command : rtpProfile.commandsToRun)
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), fillPlaceholders(command, placeholders));
+        for (String message : rtpProfile.messagesToSend)
+            player.sendRichMessage(fillPlaceholders(message, placeholders));
     }
 
     static class RandomTeleportActionAlreadyUsedException extends RuntimeException {}

@@ -43,6 +43,7 @@ public class RtpProfile {
         false,
         LocCheckProfiles.AUTO,
         new String[0],
+        new String[0],
         0
     );
 
@@ -74,6 +75,7 @@ public class RtpProfile {
     public final boolean preferSyncTpOnCommand;
     public final LocCheckProfiles     checkProfile;
     public final String[]             commandsToRun;
+    public final String[]             messagesToSend;
     public final double               cost; // Will be 0 if we can't use economy
     /* except these */
     public final boolean              warmupEnabled; // Just for convenience (it is mostly redundant)
@@ -89,8 +91,8 @@ public class RtpProfile {
      */
     @SuppressWarnings("ConstantConditions")
     public RtpProfile(
-        final ConfigurationSection config, String name, Map<String, DistributionSettings> distributions,
-        RtpProfile defaults
+            final ConfigurationSection config, String name, Map<String, DistributionSettings> distributions,
+            RtpProfile defaults
     ) throws JrtpBaseException {
         this.name = name;
         String nameInLog = "[" + this.name + "] ";
@@ -124,7 +126,7 @@ public class RtpProfile {
                 if (!tempCallFromWorlds.contains(testByWorld) &&
                     Pattern.compile(callFromWorld).matcher(testByWorld.getName()).matches()
                 ) tempCallFromWorlds.add(testByWorld);
-        if (tempCallFromWorlds.size() == 0)
+        if (tempCallFromWorlds.isEmpty())
             if (defaults.callFromWorlds != null) tempCallFromWorlds.addAll(defaults.callFromWorlds);
             else tempCallFromWorlds.add(landingWorld);
         callFromWorlds = Collections.unmodifiableList(tempCallFromWorlds);
@@ -188,9 +190,12 @@ public class RtpProfile {
             ? defaults.checkProfile
             : LocCheckProfiles.values()[config.getString("location-checking-profile").toLowerCase().charAt(0) - 'a'];
         infoLog( nameInLog + infoStringLocationCheckProfile(false));
-        commandsToRun = config.getStringList("then-execute").size() == 0
+        commandsToRun = config.getStringList("then-execute").isEmpty()
             ? defaults.commandsToRun
             : config.getStringList("then-execute").toArray(new String[0]);
+        messagesToSend = config.getStringList("then-send").isEmpty()
+                ? defaults.commandsToRun
+                : config.getStringList("then-send").toArray(new String[0]);
         canUseLocQueue = distribution.center != DistributionSettings.CenterTypes.PLAYER_LOCATION &&
                          cacheLocationCount > 0;
         infoLog(nameInLog + infoStringLocationCaching(false));
@@ -198,27 +203,27 @@ public class RtpProfile {
     }
 
     private RtpProfile(
-        String name,
-        boolean commandEnabled,
-        boolean requireExplicitPermission,
-        float priority,
-        World landingWorld,
-        List<World> callFromWorlds,
-        DistributionSettings distribution,
-        CoolDownTracker coolDown,
-        int warmup,
-        boolean warmupCancelOnMove,
-        boolean warmupCountDown,
-        int lowBound,
-        int highBound,
-        int checkRadiusXZ,
-        int checkRadiusVert,
-        int maxAttempts,
-        int cacheLocationCount,
-        boolean preferSyncTpOnCommand,
-        LocCheckProfiles checkProfile,
-        String[] commandsToRun,
-        double cost
+            String name,
+            boolean commandEnabled,
+            boolean requireExplicitPermission,
+            float priority,
+            World landingWorld,
+            List<World> callFromWorlds,
+            DistributionSettings distribution,
+            CoolDownTracker coolDown,
+            int warmup,
+            boolean warmupCancelOnMove,
+            boolean warmupCountDown,
+            int lowBound,
+            int highBound,
+            int checkRadiusXZ,
+            int checkRadiusVert,
+            int maxAttempts,
+            int cacheLocationCount,
+            boolean preferSyncTpOnCommand,
+            LocCheckProfiles checkProfile,
+            String[] commandsToRun, String[] messagesToSend,
+            double cost
     ) {
         this.name = name;
         this.commandEnabled = commandEnabled;
@@ -240,6 +245,7 @@ public class RtpProfile {
         this.preferSyncTpOnCommand = preferSyncTpOnCommand;
         this.checkProfile = checkProfile;
         this.commandsToRun = commandsToRun;
+        this.messagesToSend = messagesToSend;
         this.cost = cost;
         warmupEnabled = warmup > 0;
         canUseLocQueue = distribution != null &&
@@ -282,23 +288,19 @@ public class RtpProfile {
 
 
     public String getRtpRegionCenterAsString(final boolean mcFormat) {
-        switch (distribution.center) {
-            case WORLD_SPAWN:
-                return MessageFormat.format(
+        return switch (distribution.center) {
+            case WORLD_SPAWN -> MessageFormat.format(
                     "World Spawn {0}({1}, {2}){0}",
                     mcFormat ? "\u00A7o" : "",
                     (int) landingWorld.getSpawnLocation().getX(),
                     (int) landingWorld.getSpawnLocation().getZ());
-            case PRESET_VALUE:
-                return MessageFormat.format(
+            case PRESET_VALUE -> MessageFormat.format(
                     "Specified in Config {0}({1}, {2}){0}",
                     mcFormat ? "\u00A7o" : "",
                     distribution.centerX,
                     distribution.centerZ);
-            case PLAYER_LOCATION:
-                return "Player's Location";
-        }
-        return "??";
+            case PLAYER_LOCATION -> "Player's Location";
+        };
     }
 
     public String getQueueSizesAsString() {

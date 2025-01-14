@@ -2,7 +2,7 @@ name: RTP
 author: JakeTS
 main: net.gahvila.rtp.RTP
 version: '${version}'
-api-version: '1.20'
+api-version: '1.21.4'
 
 softdepend:
   # Needed for multi-world support
@@ -14,6 +14,7 @@ softdepend:
   # For claims support
   - 'CrashClaim'
   - 'WorldGuard'
+  - 'GriefPrevention'
 
 commands:
   jrtpdebug:

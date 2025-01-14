@@ -60,6 +60,7 @@ land-claim-support:
   force-disable-all: false
   crash-claim: true
   world-guard: true
+  grief-prevention: true
 
 #### logging
 # Which messages do you want to log? You can ignore log messages for settings that are disabled.
