@@ -7,10 +7,15 @@ import io.papermc.paper.registry.keys.tags.BiomeTagKeys;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SafeLocationUtils {
 
     public static final SafeLocationUtils util;
 
+    private static Registry<Biome> biomeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME);
+    private static Set<TypedKey<Biome>> allowedBiomes = new HashSet<>();
 
     static {
         util = new SafeLocationUtils();
@@ -46,7 +51,7 @@ public class SafeLocationUtils {
     boolean isSafeToBeOn(Material mat) {
         return switch (mat) {
             case LAVA, MAGMA_BLOCK, WATER, AIR, CAVE_AIR, VOID_AIR, CACTUS, SEAGRASS, KELP, TALL_SEAGRASS, LILY_PAD,
-                 BAMBOO, BAMBOO_SAPLING, SMALL_DRIPLEAF, BIG_DRIPLEAF, BIG_DRIPLEAF_STEM, POINTED_DRIPSTONE, VINE -> false;
+                 BAMBOO, BAMBOO_SAPLING, SMALL_DRIPLEAF, BIG_DRIPLEAF, BIG_DRIPLEAF_STEM, POINTED_DRIPSTONE, VINE, POWDER_SNOW -> false;
             default -> true;
         };
     }
@@ -67,17 +72,19 @@ public class SafeLocationUtils {
      * @param biome The biome to check
      * @return Whether it is an allowed biome
      */
-    boolean isAllowedBiome(Biome biome) {
-        Registry<Biome> biomeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME);
-        TypedKey<Biome> biomeTypedKey = TypedKey.create(RegistryKey.BIOME, biomeRegistry.getKeyOrThrow(biome));
+    public static void loadAllowBiome() {
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_FOREST).values());
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_SAVANNA).values());
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_TAIGA).values());
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_HILL).values());
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_JUNGLE).values());
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_NETHER).values());
+        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_END).values());
+    }
 
-        return biomeRegistry.getTag(BiomeTagKeys.IS_FOREST).contains(biomeTypedKey) ||
-                biomeRegistry.getTag(BiomeTagKeys.IS_SAVANNA).contains(biomeTypedKey) ||
-                biomeRegistry.getTag(BiomeTagKeys.IS_TAIGA).contains(biomeTypedKey) ||
-                biomeRegistry.getTag(BiomeTagKeys.IS_HILL).contains(biomeTypedKey) ||
-                biomeRegistry.getTag(BiomeTagKeys.IS_JUNGLE).contains(biomeTypedKey) ||
-                biomeRegistry.getTag(BiomeTagKeys.IS_NETHER).contains(biomeTypedKey) ||
-                biomeRegistry.getTag(BiomeTagKeys.IS_END).contains(biomeTypedKey);
+    boolean isAllowedBiome(Biome biome) {
+        TypedKey<Biome> biomeTypedKey = TypedKey.create(RegistryKey.BIOME, biomeRegistry.getKeyOrThrow(biome));
+        return allowedBiomes.contains(biomeTypedKey);
     }
 
     /**
@@ -145,6 +152,7 @@ public class SafeLocationUtils {
      */
     void dropToGround(final Location loc) {
         requireMainThread();
+        loc.setY(loc.getWorld().getHighestBlockYAt(loc) + 1);
         while (isSafeToBeIn(loc.getBlock().getType()) || isSafeToGoThrough(loc.getBlock().getType()))
             loc.add(0, -1, 0);
     }
@@ -158,6 +166,7 @@ public class SafeLocationUtils {
      * @param chunk The chunk snapshot that contains the {@code Location}'s data.
      */
     void dropToGround(final Location loc, ChunkSnapshot chunk) {
+        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk) + 1);
         while (isSafeToBeIn(locMatFromSnapshot(loc, chunk)) || isSafeToGoThrough(locMatFromSnapshot(loc, chunk)))
             loc.add(0, -1, 0);
     }
@@ -172,13 +181,16 @@ public class SafeLocationUtils {
      */
     void dropToGround(final Location loc, int lowBound, int highBound) {
         requireMainThread();
+        loc.setY(loc.getWorld().getHighestBlockYAt(loc) + 1);
         // If our location was above the max height, drop us to it.
-        if (loc.getY() > highBound) loc.setY(highBound);
-        // If we start in a solid block, we need to wait until we get out of it
-        while (loc.getBlockY() > lowBound && !(
-            isSafeToBeIn(loc.getBlock().getType())
-            || isSafeToGoThrough(loc.getBlock().getType()))
-        ) loc.add(0, -1, 0);
+        if (loc.getY() > highBound) {
+            loc.setY(highBound);
+            // If we start in a solid block, we need to wait until we get out of it
+            while (loc.getBlockY() > lowBound && !(
+                isSafeToBeIn(loc.getBlock().getType())
+                || isSafeToGoThrough(loc.getBlock().getType()))
+            ) loc.add(0, -1, 0);
+        }
         // Now we are in something non-solid; we can start looking for the ground
         while (loc.getBlockY() > lowBound && (
             isSafeToBeIn(loc.getBlock().getType())
@@ -196,13 +208,16 @@ public class SafeLocationUtils {
      * @param chunk    The chunk snapshot that contains the {@code Location}'s data.
      */
     void dropToGround(final Location loc, int lowBound, int highBound, ChunkSnapshot chunk) {
+        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk) + 1);
         // If our location was above the max height, drop us to it.
-        if (loc.getY() > highBound) loc.setY(highBound);
-        // If we start in a solid block, we need to wait until we get out of it
-        while (loc.getBlockY() > lowBound && !(
-            isSafeToBeIn(locMatFromSnapshot(loc, chunk))
-            || isSafeToGoThrough(locMatFromSnapshot(loc, chunk)))
-        ) loc.add(0, -1, 0);
+        if (loc.getY() > highBound) {
+            loc.setY(highBound);
+            // If we start in a solid block, we need to wait until we get out of it
+            while (loc.getBlockY() > lowBound && !(
+                isSafeToBeIn(locMatFromSnapshot(loc, chunk))
+                || isSafeToGoThrough(locMatFromSnapshot(loc, chunk)))
+            ) loc.add(0, -1, 0);
+        }
         // Now we are in something non-solid; we can start looking for the ground
         while (loc.getBlockY() > lowBound && (
             isSafeToBeIn(locMatFromSnapshot(loc, chunk))
@@ -269,6 +284,20 @@ public class SafeLocationUtils {
 
     Biome chunkLocBiomeFromSnapshot(int inX, int y, int inZ, ChunkSnapshot chunk) {
         return chunk.getBiome(inX, y, inZ);
+    }
+
+    int locHighestBlockYAtFromSnapshot(Location loc, ChunkSnapshot chunk) {
+        if (!isLocationInsideChunk(loc, chunk))
+            throw new RuntimeException("The given location is not within given chunk!");
+        int x = loc.getBlockX() % 16;
+        int z = loc.getBlockZ() % 16;
+        if (x < 0) x += 16;
+        if (z < 0) z += 16;
+        return chunkHighestBlockYAtFromSnapshot(x, z, chunk);
+    }
+
+    int chunkHighestBlockYAtFromSnapshot(int inX, int inZ, ChunkSnapshot chunk) {
+        return chunk.getHighestBlockYAt(inX, inZ);
     }
 
     Material locMatFromSnapshot(Location loc, ChunkSnapshot chunk) {
