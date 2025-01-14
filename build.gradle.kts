@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "net.gahvila"
-version = "0.17.0-SNAPSHOT"
+version = "0.17.0"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
