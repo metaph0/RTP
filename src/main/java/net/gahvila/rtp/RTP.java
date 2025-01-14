@@ -85,7 +85,6 @@ public final class RTP extends JavaPlugin {
         loadMessageMap(); // Loads all the messages that get sent by the plugin
         loadRandomTeleporter(); // Loads the random teleporter
         loadLocationCacheFiller(); // Loads the location cache filler
-        SafeLocationUtils.loadAllowBiome(); // Loads allow biome
 
         if (!getConfig().getBoolean("land-claim-support.force-disable-all", false))
             claimsManager = new ClaimsManager(this, getConfig().getConfigurationSection("land-claim-support"));

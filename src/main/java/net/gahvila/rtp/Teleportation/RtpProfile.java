@@ -194,7 +194,7 @@ public class RtpProfile {
             ? defaults.commandsToRun
             : config.getStringList("then-execute").toArray(new String[0]);
         messagesToSend = config.getStringList("then-send").isEmpty()
-                ? defaults.commandsToRun
+                ? defaults.messagesToSend
                 : config.getStringList("then-send").toArray(new String[0]);
         canUseLocQueue = distribution.center != DistributionSettings.CenterTypes.PLAYER_LOCATION &&
                          cacheLocationCount > 0;

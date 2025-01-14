@@ -66,25 +66,31 @@ public class SafeLocationUtils {
         return Tag.LEAVES.isTagged(mat);
     }
 
-    /**
-     * Checks if the biome is allowed.
-     *
-     * @param biome The biome to check
-     * @return Whether it is an allowed biome
-     */
-    public static void loadAllowBiome() {
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_FOREST).values());
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_SAVANNA).values());
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_TAIGA).values());
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_HILL).values());
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_JUNGLE).values());
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_NETHER).values());
-        allowedBiomes.addAll(biomeRegistry.getTag(BiomeTagKeys.IS_END).values());
-    }
-
     boolean isAllowedBiome(Biome biome) {
-        TypedKey<Biome> biomeTypedKey = TypedKey.create(RegistryKey.BIOME, biomeRegistry.getKeyOrThrow(biome));
-        return allowedBiomes.contains(biomeTypedKey);
+        Set<Biome> allowedBiomes = new HashSet<>();
+        allowedBiomes.add(Biome.MEADOW);
+        allowedBiomes.add(Biome.CHERRY_GROVE);
+        allowedBiomes.add(Biome.FOREST);
+        allowedBiomes.add(Biome.FLOWER_FOREST);
+        allowedBiomes.add(Biome.TAIGA);
+        allowedBiomes.add(Biome.OLD_GROWTH_PINE_TAIGA);
+        allowedBiomes.add(Biome.OLD_GROWTH_SPRUCE_TAIGA);
+        allowedBiomes.add(Biome.BIRCH_FOREST);
+        allowedBiomes.add(Biome.OLD_GROWTH_BIRCH_FOREST);
+        allowedBiomes.add(Biome.DARK_FOREST);
+        allowedBiomes.add(Biome.SPARSE_JUNGLE);
+        allowedBiomes.add(Biome.SWAMP);
+        allowedBiomes.add(Biome.MANGROVE_SWAMP);
+        allowedBiomes.add(Biome.PLAINS);
+        allowedBiomes.add(Biome.SUNFLOWER_PLAINS);
+        allowedBiomes.add(Biome.SAVANNA);
+        allowedBiomes.add(Biome.SAVANNA_PLATEAU);
+        allowedBiomes.add(Biome.NETHER_WASTES);
+        allowedBiomes.add(Biome.SOUL_SAND_VALLEY);
+        allowedBiomes.add(Biome.CRIMSON_FOREST);
+        allowedBiomes.add(Biome.WARPED_FOREST);
+        allowedBiomes.add(Biome.PALE_GARDEN);
+        return allowedBiomes.contains(biome);
     }
 
     /**
@@ -152,7 +158,6 @@ public class SafeLocationUtils {
      */
     void dropToGround(final Location loc) {
         requireMainThread();
-        loc.setY(loc.getWorld().getHighestBlockYAt(loc) + 1);
         while (isSafeToBeIn(loc.getBlock().getType()) || isSafeToGoThrough(loc.getBlock().getType()))
             loc.add(0, -1, 0);
     }
@@ -166,7 +171,6 @@ public class SafeLocationUtils {
      * @param chunk The chunk snapshot that contains the {@code Location}'s data.
      */
     void dropToGround(final Location loc, ChunkSnapshot chunk) {
-        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk) + 1);
         while (isSafeToBeIn(locMatFromSnapshot(loc, chunk)) || isSafeToGoThrough(locMatFromSnapshot(loc, chunk)))
             loc.add(0, -1, 0);
     }
@@ -181,7 +185,7 @@ public class SafeLocationUtils {
      */
     void dropToGround(final Location loc, int lowBound, int highBound) {
         requireMainThread();
-        loc.setY(loc.getWorld().getHighestBlockYAt(loc) + 1);
+        loc.setY(loc.getWorld().getHighestBlockYAt(loc));
         // If our location was above the max height, drop us to it.
         if (loc.getY() > highBound) {
             loc.setY(highBound);
@@ -208,7 +212,6 @@ public class SafeLocationUtils {
      * @param chunk    The chunk snapshot that contains the {@code Location}'s data.
      */
     void dropToGround(final Location loc, int lowBound, int highBound, ChunkSnapshot chunk) {
-        loc.setY(locHighestBlockYAtFromSnapshot(loc, chunk) + 1);
         // If our location was above the max height, drop us to it.
         if (loc.getY() > highBound) {
             loc.setY(highBound);
@@ -284,20 +287,6 @@ public class SafeLocationUtils {
 
     Biome chunkLocBiomeFromSnapshot(int inX, int y, int inZ, ChunkSnapshot chunk) {
         return chunk.getBiome(inX, y, inZ);
-    }
-
-    int locHighestBlockYAtFromSnapshot(Location loc, ChunkSnapshot chunk) {
-        if (!isLocationInsideChunk(loc, chunk))
-            throw new RuntimeException("The given location is not within given chunk!");
-        int x = loc.getBlockX() % 16;
-        int z = loc.getBlockZ() % 16;
-        if (x < 0) x += 16;
-        if (z < 0) z += 16;
-        return chunkHighestBlockYAtFromSnapshot(x, z, chunk);
-    }
-
-    int chunkHighestBlockYAtFromSnapshot(int inX, int inZ, ChunkSnapshot chunk) {
-        return chunk.getHighestBlockYAt(inX, inZ);
     }
 
     Material locMatFromSnapshot(Location loc, ChunkSnapshot chunk) {

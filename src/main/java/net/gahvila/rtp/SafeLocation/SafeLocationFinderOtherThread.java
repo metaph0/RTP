@@ -101,9 +101,7 @@ public class SafeLocationFinderOtherThread extends SafeLocationFinder {
             Future<CompletableFuture<ChunkSnapshot>> callSyncFuture =
                     Bukkit.getScheduler().callSyncMethod(
                             RTP.plugin,
-                            () -> chunkAt.getWorld().getChunkAtAsync(chunkAt).thenApply(chunk -> {
-                                return chunk.getChunkSnapshot(true, true, false, false);
-                            })
+                            () -> chunkAt.getWorld().getChunkAtAsync(chunkAt).thenApply(chunk -> chunk.getChunkSnapshot(false, true, false, false))
                     );
             // Looks to get the result of `callSyncFuture` which will be the value of `getChunkSnapshotFuture`
             while (System.currentTimeMillis() < maxTime && plugin.locCache())
