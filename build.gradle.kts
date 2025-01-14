@@ -22,20 +22,24 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     implementation("net.crashcraft:crashclaim:1.0.42")
-    compileOnly("org.popcraft:chunky-common:1.4.10")
-    compileOnly("org.popcraft:chunkyborder-common:1.2.13")
-    compileOnly("org.popcraft:chunkyborder-bukkit:1.2.13")
+    compileOnly("org.popcraft:chunky-common:1.4.28")
+    compileOnly("org.popcraft:chunkyborder-common:1.2.23")
+    compileOnly("org.popcraft:chunkyborder-bukkit:1.2.23")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit", module = "bukkit")
     }
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13-SNAPSHOT")
 }
 
 publishing {
     repositories {
         maven {
             name = "gahvila"
-            url = uri("https://repo.gahvila.net/snapshots/")
+            url = if (version.toString().contains("SNAPSHOT", ignoreCase = true)) {
+                uri("https://repo.gahvila.net/snapshots/")
+            } else {
+                uri("https://repo.gahvila.net/releases/")
+            }
             credentials(PasswordCredentials::class)
             authentication {
                 create<BasicAuthentication>("basic")
