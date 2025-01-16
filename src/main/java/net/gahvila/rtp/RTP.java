@@ -1,5 +1,6 @@
 package net.gahvila.rtp;
 
+import net.gahvila.rtp.API.rtpAPI;
 import net.gahvila.rtp.Teleportation.RandomTeleporter;
 import net.gahvila.rtp.Teleportation.RtpOnEvent;
 import net.gahvila.rtp.argsChecker.Util;
@@ -60,6 +61,8 @@ public final class RTP extends JavaPlugin {
 
     private boolean locCache = false;
 
+    private rtpAPI api;
+
     //</editor-fold>
 
     @Override
@@ -78,6 +81,7 @@ public final class RTP extends JavaPlugin {
         logger = plugin.getLogger();
         cmdMap = new Yaml().load(this.getClassLoader().getResourceAsStream("commandTree.yml"));
         worldBorderPluginHook = new WorldBorderPluginHook(getServer());
+        api = new rtpAPI(plugin, theRandomTeleporter);
 
         hasEconomy = setupEconomy();
         loadConfigs(); // Loads the default configs if no configs are there
@@ -299,6 +303,10 @@ public final class RTP extends JavaPlugin {
     public String getCurrentConfigVersion() {return getConfig().getString("config-version");}
 
     public RandomTeleporter getRandomTeleporter() {return theRandomTeleporter;}
+
+    public rtpAPI getAPI() {
+        return api;
+    }
     //</editor-fold>
 
     /* ================================================== *\
