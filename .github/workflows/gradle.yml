@@ -16,3 +16,8 @@ jobs:
         run: chmod +x gradlew
       - name: Publish with Gradle
         run: ./gradlew build publish -PgahvilaUsername=${{ secrets.MAVEN_NAME }} -PgahvilaPassword=${{ secrets.MAVEN_SECRET }}
+      - name: Archive artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: jar
+          path: build/libs/

@@ -1,9 +1,5 @@
 package net.gahvila.rtp.SafeLocation;
 
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
-import io.papermc.paper.registry.TypedKey;
-import io.papermc.paper.registry.keys.tags.BiomeTagKeys;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 
@@ -13,9 +9,6 @@ import java.util.Set;
 public class SafeLocationUtils {
 
     public static final SafeLocationUtils util;
-
-    private static Registry<Biome> biomeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME);
-    private static Set<TypedKey<Biome>> allowedBiomes = new HashSet<>();
 
     static {
         util = new SafeLocationUtils();

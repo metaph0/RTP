@@ -6,7 +6,7 @@ repo is available at
 ```kotlin
 repositories {
     maven {
-        url = uri("https://repo.gahvila.net/snapshots/")
+        url = uri("https://repo.gahvila.net/(snapshots OR releases)/")
     }
 }
 

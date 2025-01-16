@@ -59,16 +59,16 @@ public class CmdRtp implements TabExecutor {
                                 randomTeleporter.playersInWarmup.put(player.getUniqueId(),
                                                                      taskID); // Needed for canceling.
                             } else execRtp.run(); // No warmup, just run the teleport.
-                        } else player.sendMessage(Messages.ECON_NOT_ENOUGH_MONEY.format(
+                        } else player.sendRichMessage(Messages.ECON_NOT_ENOUGH_MONEY.format(
                             relSettings.cost, plugin.getEconomy().getBalance(player)));
-                    } else player.sendMessage(Messages.WARMUP_RTP_ALREADY_CALLED.format());
-                } else player.sendMessage(Messages.NEED_WAIT_COOLDOWN.format(
+                    } else player.sendRichMessage(Messages.WARMUP_RTP_ALREADY_CALLED.format());
+                } else player.sendRichMessage(Messages.NEED_WAIT_COOLDOWN.format(
                     relSettings.coolDown.timeLeftWords(player.getName())));
             }
         } catch (JrtpBaseException.NotPermittedException npe) {
-            sender.sendMessage(Messages.NP_GENERIC.format(npe.getMessage()));
+            sender.sendRichMessage(Messages.NP_GENERIC.format(npe.getMessage()));
         } catch (JrtpBaseException e) {
-            sender.sendMessage(e.getMessage());
+            sender.sendRichMessage(e.getMessage());
             e.printStackTrace();
         }
         return true;
@@ -102,7 +102,7 @@ public class CmdRtp implements TabExecutor {
             private int timeDifInSeconds() { return (int) ((System.currentTimeMillis() - startTime) / 1000); }
 
             private void countDown() {
-                player.sendMessage(Messages.
+                player.sendRichMessage(Messages.
                     WARMUP_TELEPORTING_IN_X.format(
                     rtpProfile.warmup - timeDifInSeconds()
                 ));
@@ -111,7 +111,7 @@ public class CmdRtp implements TabExecutor {
             private void teleport() {
                 try {
                     if (rtpProfile.cost > 0 && plugin.getEconomy().getBalance(player) < rtpProfile.cost) {
-                        player.sendMessage(Messages.ECON_NO_LONGER_ENOUGH_MONEY.format());
+                        player.sendRichMessage(Messages.ECON_NO_LONGER_ENOUGH_MONEY.format());
                         return;
                     }
                     // Do the teleport action
@@ -131,14 +131,14 @@ public class CmdRtp implements TabExecutor {
                     // Charge the player
                     if (rtpProfile.cost > 0) {
                         EconomyResponse er = plugin.getEconomy().withdrawPlayer(player, rtpProfile.cost);
-                        if (er.transactionSuccess()) player.sendMessage(Messages.ECON_YOU_WERE_CHARGED_X.format(
+                        if (er.transactionSuccess()) player.sendRichMessage(Messages.ECON_YOU_WERE_CHARGED_X.format(
                             plugin.getEconomy().format(er.amount),
                             plugin.getEconomy().format(er.balance)));
-                        else player.sendMessage(Messages.ECON_ERROR.format(
+                        else player.sendRichMessage(Messages.ECON_ERROR.format(
                             "An economy error occurred: {0}", er.errorMessage));
                     }
                 } catch (Exception e) {
-                    player.sendMessage(Messages.NP_UNEXPECTED_EXCEPTION.format(e.getMessage()));
+                    player.sendRichMessage(Messages.NP_UNEXPECTED_EXCEPTION.format(e.getMessage()));
                     e.printStackTrace();
                 } finally {
                     cancelTask();
@@ -146,7 +146,7 @@ public class CmdRtp implements TabExecutor {
             }
 
             private void cancel() {
-                player.sendMessage(Messages.WARMUP_CANCEL_BECAUSE_MOVE.format());
+                player.sendRichMessage(Messages.WARMUP_CANCEL_BECAUSE_MOVE.format());
                 cancelTask();
             }
 
